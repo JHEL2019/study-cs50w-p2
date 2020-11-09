@@ -1,0 +1,38 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <div class="container-fluid">
+        <table class="table">
+            <thead>
+                <tr class="d-flex">
+                    <th class="col-1">image</t>
+                    <th class="col-2">name</t>
+                    <th class="col-7">description</t>
+                    <th class="col-2">price</t>
+                </tr>
+            </thead>
+            <tbody>
+                {%for row in listings %}
+                   <tr class="d-flex">
+                        {% if row.image_url %}
+                            <td><img src="{{ row.image_url }}" alt="refence photo" class="img-thumbnail"></td>
+                        {% else %}
+                            <td class="col-1"><img src="{% static 'auctions/no_image.jpg' %}" alt="no image"  class="img-thumbnail"></td>
+                        {% endif %}
+                        <td class="col-2"><strong><a href="{% url 'listing' row.id %}">{{ row.item | capfirst }}</strong></h3></td>
+                        <td class="col-7">{{ row.description }}</td>
+                        <td class="col-2"><span>Price: $ </span><span>{{ row.min_price }}</span></td>
+                    </tr>
+                {% empty %}
+                    <p>No active listings available</p>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        
+
+
+{% endblock %}

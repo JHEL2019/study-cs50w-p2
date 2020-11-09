@@ -1,0 +1,57 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+    <h2>Listing Details for {{ listing.item | capfirst }}</h2>
+
+    <!-- show any messages such as error message etc. -->
+    {% if message %}
+        <div class="alert alert-warning alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> {{ message }}
+      </div>
+    {% endif %}
+
+    <!-- Show details of listing -->
+    <div class="row">
+        <div class="col-5">
+            <!-- place a 'watchlist' label above the image -->
+            {% if session.watchlist and session.watchlist == listing.id %}
+                <p class="small text-white-50 bg-dark"><pre>  Watchlist  </pre></p>
+            {% endif %}
+            <!-- show image or placeholder -->
+            {% if listing.image_url %}
+                <img src="{{ listing.image_url }}" alt="refence photo"  class="img-fluid">
+            {% else %}
+                <img src="{% static 'auctions/no_image.jpg' %}" alt="no image"  class="img-thumbnail">
+            {% endif %}
+            
+        </div>
+        <div class="col-7">
+            <h5 class="display-4">{{ listing.item | capfirst }}</h5>
+
+            <p>starting price: ${{ listing.min_price }}</p>
+            <p>current bid: ${{ listing.min_price }}</p>
+            <p>{{ listing.description }}</p>
+            <small class="text-muted">created: {{ listing.createdate }} " by " {{ listing.owner }}</small>
+        </div>
+    </div>
+
+    <!-- interactions, for signed-in users only -->
+    {% if user.is_authenticated %}
+        <form action="{% url 'auctions/listing' listing.id" method="POST">
+            <!-- add listing to watchlist -->
+
+            <!-- bid for this listed item -->
+        
+            <!-- the owner shouldbe able to close the listing -->
+
+            <!-- closed items should indicate to the winner that he won -->
+
+            <!-- add comment and show all previous comments -->
+        
+        
+        </form>
+    {% endif %}
+{% endblock %}
