@@ -17,6 +17,12 @@ class ListingForm(ModelForm):
         fields = ['item', 'min_price', 'category','image_url' , 'description']
         initial = {'category' : 'general'}
 
+class CommentForm(ModelForm):
+        class Meta:
+            model = Comment
+            fields = ['text']
+            widgets = { 'name': Textarea(attrs={'cols': 80, 'rows': 20}) }
+
 
 # Add views here:
 
