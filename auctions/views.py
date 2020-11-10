@@ -2,27 +2,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError
-from django.forms.models import ModelFormMetaclass
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.forms import ModelForm
+
 from .models import User, Listing, Bid, Comment, Category
-
-
-# Add Forms here (alternatively move to forms.py):
-class ListingForm(ModelForm):
-    class Meta:
-        model = Listing
-        fields = ['item', 'min_price', 'category','image_url' , 'description']
-        initial = {'category' : 'general'}
-
-class CommentForm(ModelForm):
-        class Meta:
-            model = Comment
-            fields = ['text']
-            widgets = { 'name': Textarea(attrs={'cols': 80, 'rows': 20}) }
-
+from .forms import ListingForm, CommentForm
 
 # Add views here:
 
@@ -113,7 +99,10 @@ def listing(request, listing_id, method=["GET", "POST"]):
 
         # retrieve data for listing record and create context
         this_listing = Listing.objects.filter(id = listing_id).values().first()
+        print("DEF LISTING - this_listing <- POST", this_listing)
+
         owner_name = User.objects.filter(id = this_listing['owner']).values().first()["username"]
+
         this_listing['owner_name'] = owner_name
 
 

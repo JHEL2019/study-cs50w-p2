@@ -1,19 +1,17 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
 import os
 from django.conf import settings
-from django.db.models.deletion import DO_NOTHING, PROTECT, SET_DEFAULT
 
-# def images_path():
-#    return os.path.join(settings.MEDIA_ROOT, 'auction')
+from django.db import models
+from django.db.models.deletion import DO_NOTHING, PROTECT, SET_DEFAULT
+from django.contrib.auth.models import AbstractUser
 
 # Add your models here:
 
 class User(AbstractUser):
     listings = models.ManyToManyField('Listing', through='Bid')
     
-    #def __str__(self):
-    #    return f"{self.id}: {self.name}"
+    def __str__(self):
+        return f"{self.id}: {self.name}"
 
 
 class Listing(models.Model):
