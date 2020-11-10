@@ -39,8 +39,9 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            if not request.sessions['watchlist']:
-                request.sessions['watchlist']=[]
+            if 'watchlist' not in request.session:
+                request.session['watchlist'] = []
+
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auctions/login.html", {
@@ -119,4 +120,18 @@ def listing(request, listing_id, method=["GET", "POST"]):
             'bids' : bids
         })
     else:
+        data = request.POST
+
+        # Watchlist button was pressed
+        if "watchlist" in data:
+            if data['watchlist'] in request.session['watchlist']:
+                request.session['watchlist'].remove(data['watchlist'])
+            else:
+                request.session['watchlist'].append(data['watchlist'])
+            request.session.save()                
+
+        # New Bid was made
+
+        # New Comment was submitted
+
         return HttpResponseRedirect("/")

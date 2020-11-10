@@ -10,7 +10,9 @@
 <table class="table">
     <form action = "{% url 'newlisting' %}" method = "POST">
         {% csrf_token %}
+
         {{ form.as_table }}
+        
         <input class="m-3" type="submit" value="Add Listing">
     </form>
 </table>
