@@ -5,20 +5,22 @@
 {% block body %}
     <h2>Listing Details for {{ listing.item | capfirst }}</h2>
 
-    <!-- show any messages such as error message etc. -->
-    {% if message %}
+    <!-- show messages such as for etc. -->
+    {% if messages %}
         <div class="alert alert-warning alert-dismissible">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong>Warning!</strong> {{ message }}
-      </div>
+        </div>
     {% endif %}
 
     <!-- Show details of listing -->
+    
     <div class="row">
         <div class="col-5">
+            
             <!-- place a 'watchlist' label above the image -->
-            {% if session.watchlist and listing.id in session.watchlist %}
-                <p class="small text-white-50 bg-dark"><pre>  Watchlist  </pre></p>
+            {% if listing.id in request.session.watchlist %}
+                <h6 class="label label-primary">Watchlist</h6>
             {% endif %}
 
             <!-- show image or placeholder -->
@@ -33,8 +35,8 @@
 
             <p>starting price: ${{ listing.min_price }}</p>
             <p>current bid: ${{ listing.min_price }}</p>
-            <p>{{ listing.description }}</p>
-            <small class="text-muted">created: {{ listing.createdate }} " by " {{ listing.owner }}</small>
+            <p>{{ listing.description | truncatewords:30 }}</p>
+            <small class="text-muted">created: {{ listing.createdate }} " by " {{ listing.owner_name }}</small>
         </div>
     </div>
 
@@ -44,7 +46,7 @@
             {% csrf_token %}
             
             <!-- add listing to watchlist -->
-            <button type="submit" value="{{ user.id }}" name="watchlist">Watchlist</button>
+            <button type="submit" value="{{ listing.id }}" name="watchlist">Watchlist</button>
 
             <!-- bid for this listed item -->
         

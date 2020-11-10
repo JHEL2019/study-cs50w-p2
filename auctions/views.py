@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db import IntegrityError
 from django.forms.models import ModelFormMetaclass
 from django.http import HttpResponse, HttpResponseRedirect
@@ -18,6 +19,8 @@ class ListingForm(ModelForm):
 
 
 # Add views here:
+
+# default route Index showing all actiive listings
 def index(request):
     # query set of all listings where active=True
     active_listings = Listing.objects.filter(active=True).values()
@@ -27,7 +30,7 @@ def index(request):
         'listings' : active_listings
     })
 
-
+# Login User
 def login_view(request):
     if request.method == "POST":
 
@@ -50,13 +53,13 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
-
+# Logout User
 @login_required()
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
-
+# Register user
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -83,7 +86,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-
+# New Listing
 @login_required()
 def new_listing(request, method = ["GET", "POST"]):
     if request.method == "POST":
@@ -98,16 +101,17 @@ def new_listing(request, method = ["GET", "POST"]):
             'form' : ListingForm
         })
     
-   
+# Manipulate active listing details
 def listing(request, listing_id, method=["GET", "POST"]):
     if request.method == "GET":
+
         # retrieve data for listing record and create context
         this_listing = Listing.objects.filter(id = listing_id).values().first()
-        
+        owner_name = User.objects.filter(id = this_listing['owner']).values().first()["username"]
+        this_listing['owner_name'] = owner_name
 
-        print(this_listing)
 
-        # retrieve all comments lined to this listing
+        # retrieve all comments linked to this listing
         comments = {}
 
         # retrieve all bids sorted from highest to lowest
@@ -122,16 +126,31 @@ def listing(request, listing_id, method=["GET", "POST"]):
     else:
         data = request.POST
 
+        # print("POST method processing")
+        # print(request.POST)
+
         # Watchlist button was pressed
-        if "watchlist" in data:
-            if data['watchlist'] in request.session['watchlist']:
-                request.session['watchlist'].remove(data['watchlist'])
+        if request.POST.get("watchlist"):
+            num = int(data['watchlist'])
+            if num in request.session['watchlist']:
+                 request.session['watchlist'].remove(num)
             else:
-                request.session['watchlist'].append(data['watchlist'])
-            request.session.save()                
+                request.session['watchlist'].append(num)
+            request.session.save()
 
         # New Bid was made
+        elif "bid" in data:
+            pass
 
         # New Comment was submitted
+        elif "comment" in data:
+            pass
 
+        # POST request was received but cannot parsed
+        else:
+            return render(request, "auctions/listing.html", {
+                'message' : "User input could not be processed"
+            })
+
+        
         return HttpResponseRedirect("/")
