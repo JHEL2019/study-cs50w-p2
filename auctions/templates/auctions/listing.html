@@ -16,12 +16,10 @@
     
     <div class="row">
         <div class="col-5">
-            
             <!-- place a 'watchlist' label above the image -->
             {% if listing.id in request.session.watchlist %}
                 <h6 class="label label-primary">Watchlist</h6>
             {% endif %}
-
             <!-- show image or placeholder -->
             {% if listing.image_url %}
                 <img src="{{ listing.image_url }}" alt="refence photo"  class="img-fluid">
@@ -30,12 +28,12 @@
             {% endif %}
         </div>
         <div class="col-7">
+            <!-- details of lsiting -->
             <h5 class="display-4">{{ listing.item | capfirst }}</h5>
-
             <p>starting price: ${{ listing.min_price }}</p>
             <p>current bid: ${{ listing.min_price }}</p>
             <p>{{ listing.description | truncatewords:30 }}</p>
-            <small class="text-muted">created: {{ listing.createdate }} " by " {{ listing.owner_name }}</small>
+            <small class="text-muted">created: {{ listing.createdate }} " by " {{ listing_owner }}</small>
         </div>
     </div>
 

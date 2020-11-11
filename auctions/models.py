@@ -1,4 +1,3 @@
-import os
 from django.conf import settings
 
 from django.db import models
@@ -17,7 +16,6 @@ class User(AbstractUser):
 class Listing(models.Model):
     item = models.CharField(max_length=60)
     min_price = models.IntegerField()
-    # image = models.ImageField(upload_to = images_path())
     description = models.TextField()
     createdate = models.DateTimeField(auto_now=True)
     updatedate = models.DateTimeField(auto_now_add=True)
@@ -26,7 +24,7 @@ class Listing(models.Model):
     owner = models.IntegerField(default='0')
     category = models.ForeignKey('Category', default='1', on_delete=SET_DEFAULT, related_name='listing')
     users = models.ManyToManyField('User', through='Bid')
-    comments = models.ForeignKey('Comment', default='', null=True, blank=True, on_delete=models.SET_NULL, related_name='listings')
+    # comments = models.ForeignKey('Comment', default='', null=True, blank=True, on_delete=models.SET_NULL, related_name='listings')
 
     def __str__(self):
         return f"{self.id}: {self.description} - created: {self.createdate}, updated: {self.updatedate}"
@@ -42,7 +40,7 @@ class Comment(models.Model):
     text = models.CharField(max_length=150, blank=True)
     createdate = models.DateTimeField(auto_now=True)
     users = models.ForeignKey('User', blank=True, on_delete=models.CASCADE, related_name='comments')
-
+    listing = models.ForeignKey("Listing", default=None, on_delete=models.CASCADE)
 
 class Category(models.Model):
     category = models.CharField(max_length=25, default='general')

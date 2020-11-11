@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing, Bid, Comment, Category
-from .forms import ListingForm, CommentForm
+from .forms import ListingForm, CommentForm, BidForm
 
 # Add views here:
 
@@ -97,26 +97,27 @@ def new_listing(request, method = ["GET", "POST"]):
 def listing(request, listing_id, method=["GET", "POST"]):
     if request.method == "GET":
 
-        # retrieve data for listing record and create context
-        this_listing = Listing.objects.filter(id = listing_id).values().first()
-        print("DEF LISTING - this_listing <- POST", this_listing)
+        # retrieve data for listing record and create additional context
+        listing = Listing.objects.get(id = 21)
 
-        owner_name = User.objects.filter(id = this_listing['owner']).values().first()["username"]
-
-        this_listing['owner_name'] = owner_name
-
+        listing_details = Listing.objects.filter(id = listing_id).values().first()
 
         # retrieve all comments linked to this listing
-        comments = {}
+        comments = listing.comment_set.all()
 
         # retrieve all bids sorted from highest to lowest
-        bids = {}
+        bids = listing.bid_set.all()
         
+        # create additional context
+        listing_owner = User.objects.filter(id = listing_details['owner']).values().first()["username"]
 
         return render(request, "auctions/listing.html", {
-            'listing' : this_listing, 
+            'listing' : listing_details, 
             'comments' : comments, 
-            'bids' : bids
+            'comment' : CommentForm(),
+            'bids' : bids,
+            'bid' : BidForm(),
+            'listing_owner' : listing_owner
         })
     else:
         data = request.POST

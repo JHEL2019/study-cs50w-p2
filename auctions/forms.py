@@ -17,3 +17,7 @@ class CommentForm(ModelForm):
             fields = ['text']
             widgets = { 'text' : Textarea(attrs={'cols': 80, 'rows': 20}) }
 
+class BidForm(ModelForm):
+    class Meta:
+        model = Bid
+        fields = ['amount']
