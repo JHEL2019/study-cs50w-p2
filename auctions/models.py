@@ -23,7 +23,7 @@ class Listing(models.Model):
     updatedate = models.DateTimeField(auto_now_add=True)
     image_url = models.URLField(default = '', blank=True)
     active = models.BooleanField(default=True)
-    owner = models.IntegerField(default='0')
+    owner = models.IntegerField(default='1')
     category = models.ForeignKey('Category', default='1', on_delete=SET_DEFAULT, related_name='listing')
     users = models.ManyToManyField('User', through='Bid')
     comments = models.ForeignKey('Comment', default='', null=True, blank=True, on_delete=models.SET_NULL, related_name='listings')
@@ -40,6 +40,7 @@ class Bid(models.Model):
 
 class Comment(models.Model):
     text = models.CharField(max_length=150, blank=True)
+    listing = models.IntegerField()
     createdate = models.DateTimeField(auto_now=True)
     users = models.ForeignKey('User', blank=True, on_delete=models.CASCADE, related_name='comments')
 
