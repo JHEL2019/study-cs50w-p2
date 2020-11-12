@@ -22,6 +22,7 @@ def index(request):
         'listings' : active_listings
     })
 
+
 # Login User
 def login_view(request):
     if request.method == "POST":
@@ -85,7 +86,6 @@ def new_listing(request, method = ["GET", "POST"]):
         form = ListingForm(request.POST)
         if form.is_valid():
             newlisting = Listing(item = form.cleaned_data['item'], min_price = form.cleaned_data['min_price'],description = form.cleaned_data['description'], image_url = form.cleaned_data['image_url'], owner = request.user.id, category = form.cleaned_data['category'])
-            
             newlisting.save()
         return HttpResponseRedirect("/")
     else:
@@ -98,15 +98,14 @@ def listing(request, listing_id, method=["GET", "POST"]):
     if request.method == "GET":
 
         # retrieve data for listing record and create additional context
-        listing = Listing.objects.get(id = 21)
-
+        listing = Listing.objects.get(id = listing_id)
         listing_details = Listing.objects.filter(id = listing_id).values().first()
 
-        # retrieve all comments linked to this listing
+        # retrieve all comments and bids linked to this listing
         comments = listing.comment_set.all()
 
         # retrieve all bids sorted from highest to lowest
-        bids = listing.bid_set.all()
+        bids = listing.bid_set.all().order_by('-amount')
         
         # create additional context
         listing_owner = User.objects.filter(id = listing_details['owner']).values().first()["username"]
@@ -114,39 +113,52 @@ def listing(request, listing_id, method=["GET", "POST"]):
         return render(request, "auctions/listing.html", {
             'listing' : listing_details, 
             'comments' : comments, 
-            'comment' : CommentForm(),
+            'commentform' : CommentForm(),
             'bids' : bids,
-            'bid' : BidForm(),
+            'bidform' : BidForm(),
             'listing_owner' : listing_owner
         })
+    # Processing POST request
     else:
-        data = request.POST
+        # data = request.POST
 
-        # print("POST method processing")
-        # print(request.POST)
 
         # Watchlist button was pressed
-        if request.POST.get("watchlist"):
-            num = int(data['watchlist'])
+        if request.POST.get("btn-watchlist"):
+            num = int(request.POST['btn-watchlist'])
+            # change this to use arg listring_id
+
             if num in request.session['watchlist']:
                  request.session['watchlist'].remove(num)
             else:
                 request.session['watchlist'].append(num)
+            
             request.session.save()
 
+
         # New Bid was made
-        elif "bid" in data:
+        elif request.POST.get("btn-bid"):
             pass
 
+
         # New Comment was submitted
-        elif "comment" in data:
+        elif request.POST.get("btn-comment"):
+            print("LISTING - POST: BID:")
+            print(request.POST)
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = Comment(text = form.cleaned_data['text'], listings = listing_id, users = request.user)
+                comment.save
+
+        # Listing was closed
+        elif request.POST.get("btn-closed"):
             pass
+
 
         # POST request was received but cannot parsed
         else:
-            return render(request, "auctions/listing.html", {
-                'message' : "User input could not be processed"
-            })
+            return HttpResponse("User input could not be processed")
+            # render(request, "auctions/listing.html", { 'message' : "User input could not be processed" })
 
         
         return HttpResponseRedirect("/")

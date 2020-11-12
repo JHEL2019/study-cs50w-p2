@@ -1,11 +1,15 @@
 {% extends "auctions/layout.html" %}
 {% load static %}
 
+{% block title %}
+    Listing {{ listing.item | capfirst }}
+{% endblock %}
+
 {% block body %}
     <h2>Listing Details for {{ listing.item | capfirst }}</h2>
 
     <!-- show messages such as for etc. -->
-    {% if messages %}
+    {% if message %}
         <div class="alert alert-warning alert-dismissible">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong>Warning!</strong> {{ message }}
@@ -13,13 +17,13 @@
     {% endif %}
 
     <!-- Show details of listing -->
-    
     <div class="row">
         <div class="col-5">
             <!-- place a 'watchlist' label above the image -->
             {% if listing.id in request.session.watchlist %}
                 <h6 class="label label-primary">Watchlist</h6>
             {% endif %}
+
             <!-- show image or placeholder -->
             {% if listing.image_url %}
                 <img src="{{ listing.image_url }}" alt="refence photo"  class="img-fluid">
@@ -27,33 +31,56 @@
                 <img src="{% static 'auctions/no_image.jpg' %}" alt="no image"  class="img-thumbnail">
             {% endif %}
         </div>
+
         <div class="col-7">
-            <!-- details of lsiting -->
+            <!-- details of listing -->
             <h5 class="display-4">{{ listing.item | capfirst }}</h5>
             <p>starting price: ${{ listing.min_price }}</p>
             <p>current bid: ${{ listing.min_price }}</p>
             <p>{{ listing.description | truncatewords:30 }}</p>
-            <small class="text-muted">created: {{ listing.createdate }} " by " {{ listing_owner }}</small>
+            <small class="text-muted">created: {{ listing.createdate }} by {{ listing_owner }}</small>
         </div>
     </div>
 
-    <!-- interactions, for signed-in users only -->
+    <!-- For signed-in users only -->
     {% if user.is_authenticated %}
-        <form action="{% url 'listing' listing.id %}" method="POST">
-            {% csrf_token %}
-            
-            <!-- add listing to watchlist -->
-            <button type="submit" value="{{ listing.id }}" name="watchlist">Watchlist</button>
 
-            <!-- bid for this listed item -->
+        <!-- add listing to watchlist -->
+        <div>
+            <form action="{% url 'listing' listing.id %}" method="POST">
+                {% csrf_token %}
+                <button class = "btn btn-xs" type="submit" value="{{ listing.id }}" name="btn-watchlist">Watchlist</button>
+            </form>
+        </div>
         
-            <!-- the owner shouldbe able to close the listing -->
+        <!-- bid for this listed item -->
 
-            <!-- closed items should indicate to the winner that he won -->
+        <!-- the owner shouldbe able to close the listing -->
 
-            <!-- add comment and show all previous comments -->
-        
-        
-        </form>
+        <!-- closed items should indicate to the winner that he won -->       
+
+        <!-- Add a new comment to the list -->
+        <div>
+            <h5>Comment:</div>
+            {{ listing.id }}
+            <form action="{% url 'listing' listing.id%}" method="POST">
+                {% csrf_token %}
+                {{ commentform }}
+                <input type="submit" value="add comment" name="btn-comment">
+            </form>
+        </div>
+
+        <!-- Show all comment relating to this listing -->
+        <div>
+            <h5>Comment to this listing:</h5>
+            {% for comment in comments %}            
+                <div>
+                    {{ comment.as_table }}
+                </div>   
+            {% empty %}
+                <p>Be the first to comment</p>
+            {% endfor %}
+        </div>
+
     {% endif %}
 {% endblock %}
