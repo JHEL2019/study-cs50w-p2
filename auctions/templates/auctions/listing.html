@@ -21,7 +21,7 @@
         <div class="col-5">
             <!-- place a 'watchlist' label above the image -->
             {% if listing.id in request.session.watchlist %}
-                <h6 class="label label-primary">Watchlist</h6>
+                <span class="badge badge-pill badge-primary">Watchlist</span>
             {% endif %}
 
             <!-- show image or placeholder -->
@@ -39,20 +39,20 @@
             <p>current bid: ${{ listing.min_price }}</p>
             <p>{{ listing.description | truncatewords:30 }}</p>
             <small class="text-muted">created: {{ listing.createdate }} by {{ listing_owner }}</small>
+            {% if user.is_authenticated %}
+                 <!-- add listing to watchlist -->
+                <div>
+                    <form action="{% url 'listing' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-secondary btn-sm my-2" type="submit" value="{{ listing.id }}" name="btn-watchlist">Watchlist</button>
+                    </form>
+                </div>
+            {% endif %}
         </div>
     </div>
 
     <!-- For signed-in users only -->
     {% if user.is_authenticated %}
-
-        <!-- add listing to watchlist -->
-        <div>
-            <form action="{% url 'listing' listing.id %}" method="POST">
-                {% csrf_token %}
-                <button class = "btn btn-xs" type="submit" value="{{ listing.id }}" name="btn-watchlist">Watchlist</button>
-            </form>
-        </div>
-
         <!-- bid for this listed item -->
 
         <!-- the owner shouldbe able to close the listing -->
@@ -60,26 +60,36 @@
         <!-- closed items should indicate to the winner that he won -->       
 
         <!-- Add a new comment to the list -->
-        <div>
-            <h5>Comment:</div>
-            {{ listing.id }}
+        <h5>Add your comment:</div>
+
+        <div class="table-responsive-sm">    
             <form action="{% url 'listing' listing.id%}" method="POST">
                 {% csrf_token %}
-                {{ commentform }}
-                <input type="submit" value="add comment" name="btn-comment">
+                    <table class="table">
+                        {{ commentform.as_table }}
+                    </table>
+                    <input type="submit" value="add comment" name="btn-comment" class="btn btn-primary">
+                
             </form>
         </div>
 
         <!-- Show all comment relating to this listing -->
-        <div>
-            <h5>Comments for this listing:</h5>
+        <h5 class="mt-5">Comment History:</h5>
+        <div class="table-responsive">
+            <table class="table table-striped">
             {% for comment in comments %}            
-                <div>
-                    {{ comment }}
-                </div>   
+                <tr>
+                    <td>
+                        <small class="text-muted">on {{ comment.createdate }}:</small>
+                        <p>{{ comment.text }}</p>
+                </td>
+                </tr> 
             {% empty %}
-                <p>Be the first to comment</p>
+                <tr>
+                    <p>Be the first to comment</p>
+                </tr>
             {% endfor %}
+            </table>
         </div>
 
     {% endif %}

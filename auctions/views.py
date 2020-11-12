@@ -102,7 +102,7 @@ def listing(request, listing_id, method=["GET", "POST"]):
         listing_details = Listing.objects.filter(id = listing_id).values().first()
 
         # retrieve all comments and bids linked to this listing
-        comments = listing.comment_set.all()
+        comments = listing.comment_set.all().order_by('-createdate')
 
         # retrieve all bids sorted from highest to lowest
         bids = listing.bid_set.all().order_by('-amount')
@@ -120,9 +120,6 @@ def listing(request, listing_id, method=["GET", "POST"]):
         })
     # Processing POST request
     else:
-        # data = request.POST
-
-
         # Watchlist button was pressed
         if request.POST.get("btn-watchlist"):
             num = int(request.POST['btn-watchlist'])
@@ -157,6 +154,5 @@ def listing(request, listing_id, method=["GET", "POST"]):
         else:
             return HttpResponse("User input could not be processed")
             # render(request, "auctions/listing.html", { 'message' : "User input could not be processed" })
-
         
         return HttpResponseRedirect("/")
