@@ -9,9 +9,9 @@ from django.contrib.auth.models import AbstractUser
 # User
 class User(AbstractUser):
     listings = models.ManyToManyField('Listing', through='Bid')
-    
+
     def __str__(self):
-        return f"{self.id}: {self.name}"
+        return f"{self.id}:"
 
 # Listing
 class Listing(models.Model):
@@ -47,7 +47,7 @@ class Comment(models.Model):
     listings = models.ForeignKey('Listing', default=None, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{id}: by user {self.user} for listing {self.listing} created on {self.createdate}"
+        return f"{self.id}: by user {self.user} created on {self.createdate}"
 
 # category
 class Category(models.Model):

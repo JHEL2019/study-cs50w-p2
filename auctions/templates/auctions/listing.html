@@ -52,7 +52,7 @@
                 <button class = "btn btn-xs" type="submit" value="{{ listing.id }}" name="btn-watchlist">Watchlist</button>
             </form>
         </div>
-        
+
         <!-- bid for this listed item -->
 
         <!-- the owner shouldbe able to close the listing -->
@@ -72,10 +72,10 @@
 
         <!-- Show all comment relating to this listing -->
         <div>
-            <h5>Comment to this listing:</h5>
+            <h5>Comments for this listing:</h5>
             {% for comment in comments %}            
                 <div>
-                    {{ comment.as_table }}
+                    {{ comment }}
                 </div>   
             {% empty %}
                 <p>Be the first to comment</p>

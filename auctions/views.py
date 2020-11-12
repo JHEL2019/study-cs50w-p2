@@ -143,12 +143,10 @@ def listing(request, listing_id, method=["GET", "POST"]):
 
         # New Comment was submitted
         elif request.POST.get("btn-comment"):
-            print("LISTING - POST: BID:")
-            print(request.POST)
             form = CommentForm(request.POST)
             if form.is_valid():
-                comment = Comment(text = form.cleaned_data['text'], listings = listing_id, users = request.user)
-                comment.save
+                comment = Comment(text = form.cleaned_data['text'], listings = Listing.objects.get(pk=listing_id), user = request.user)
+                comment.save()
 
         # Listing was closed
         elif request.POST.get("btn-closed"):
