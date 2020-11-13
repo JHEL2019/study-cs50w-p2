@@ -36,9 +36,6 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
     amount = models.IntegerField()
 
-
-
-
     def __str__(self):
         return f"{self.user} bid for {self.listing} the amout of {self.amount}"
 
