@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.db import IntegrityError
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -92,29 +91,34 @@ def new_listing(request, method = ["GET", "POST"]):
         return render(request, 'auctions/new_listing.html', {
             'form' : ListingForm
         })
-    
+
+
 # Manipulate active listing details
 def listing(request, listing_id, method=["GET", "POST"]):
     if request.method == "GET":
-
-        # retrieve data for listing record and create additional context
-        listing = Listing.objects.get(id = listing_id)
-        listing_details = Listing.objects.filter(id = listing_id).values().first()
-
-        # retrieve all comments and bids linked to this listing
-        comments = listing.comment_set.all().order_by('-createdate')
-
-        # retrieve all bids sorted from highest to lowest
-        bids = listing.bid_set.all().order_by('-amount')
+        print("--> LISTING - GET METHOD")
         
+        # retrieve listing object
+        listing = Listing.objects.get(id = listing_id)
+
+        # retrieve all details of this listing
+        listing_details = Listing.objects.filter(id = listing_id).values()[0]
         # create additional context
         listing_owner = User.objects.filter(id = listing_details['owner']).values().first()["username"]
 
+
+        # retrieve all comments and bids linked to this listing
+        comments = listing.comment_set.values('text', 'createdate', 'user__username')
+        
+        # retrieve highest bid
+        bid_max = listing.bid_set.values('amount', 'user', 'user__username').order_by('-amount')[0]
+        print('-->BID MAX:', bid_max)
+        
         return render(request, "auctions/listing.html", {
             'listing' : listing_details, 
             'comments' : comments, 
             'commentform' : CommentForm(),
-            'bids' : bids,
+            'bid_max' : bid_max,
             'bidform' : BidForm(),
             'listing_owner' : listing_owner
         })
@@ -123,19 +127,19 @@ def listing(request, listing_id, method=["GET", "POST"]):
         # Watchlist button was pressed
         if request.POST.get("btn-watchlist"):
             num = int(request.POST['btn-watchlist'])
-            # change this to use arg listring_id
-
             if num in request.session['watchlist']:
                  request.session['watchlist'].remove(num)
             else:
                 request.session['watchlist'].append(num)
-            
             request.session.save()
 
 
         # New Bid was made
         elif request.POST.get("btn-bid"):
-            pass
+            form = BidForm(request.POST)
+            if form.is_valid():
+                bid = Bid(amount = form.cleaned_data['amount'], listing = Listing.objects.get(pk=listing_id), user = request.user)
+                bid.save()
 
 
         # New Comment was submitted
@@ -144,6 +148,7 @@ def listing(request, listing_id, method=["GET", "POST"]):
             if form.is_valid():
                 comment = Comment(text = form.cleaned_data['text'], listings = Listing.objects.get(pk=listing_id), user = request.user)
                 comment.save()
+
 
         # Listing was closed
         elif request.POST.get("btn-closed"):

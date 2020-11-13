@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.deletion import DO_NOTHING, PROTECT, SET_DEFAULT
 from django.contrib.auth.models import AbstractUser
 
+
 # Add your models here:
 
 # User
@@ -34,6 +35,9 @@ class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
     amount = models.IntegerField()
+
+
+
 
     def __str__(self):
         return f"{self.user} bid for {self.listing} the amout of {self.amount}"

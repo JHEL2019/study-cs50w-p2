@@ -35,12 +35,19 @@
         <div class="col-7">
             <!-- details of listing -->
             <h5 class="display-4">{{ listing.item | capfirst }}</h5>
-            <p>starting price: ${{ listing.min_price }}</p>
-            <p>current bid: ${{ listing.min_price }}</p>
+
+            <small class="text-muted">starting price: ${{ listing.min_price }}</small>
+            {% if bid_max.amount %}
+                <p>current bid: ${{ bid_max.amount }}</p>
+            {% else %}
+                <p>No bid submitted yet</p>
+            {% endif %}
+            
             <p>{{ listing.description | truncatewords:30 }}</p>
             <small class="text-muted">created: {{ listing.createdate }} by {{ listing_owner }}</small>
+            
             {% if user.is_authenticated %}
-                 <!-- add listing to watchlist -->
+                <!-- add listing to watchlist -->
                 <div>
                     <form action="{% url 'listing' listing.id %}" method="POST">
                         {% csrf_token %}
@@ -54,6 +61,16 @@
     <!-- For signed-in users only -->
     {% if user.is_authenticated %}
         <!-- bid for this listed item -->
+        <h5>Place a Bid:</div>
+        <div class="table-responsive-sm">
+            <form action="{%url 'listing' listing.id %}" method="POST">
+                <table class="table">
+                    {% csrf_token %}
+                    {{ bidform.as_p }}
+                    <input type="submit" value="Submit Bid" name="btn-bid" class="btn btn-primary">
+            </table>
+            </form>
+        </div>
 
         <!-- the owner shouldbe able to close the listing -->
 
@@ -65,11 +82,10 @@
         <div class="table-responsive-sm">    
             <form action="{% url 'listing' listing.id%}" method="POST">
                 {% csrf_token %}
-                    <table class="table">
-                        {{ commentform.as_table }}
-                    </table>
-                    <input type="submit" value="add comment" name="btn-comment" class="btn btn-primary">
-                
+                <table class="table">
+                    {{ commentform.as_table }}
+                </table>
+                <input type="submit" value="add comment" name="btn-comment" class="btn btn-primary">
             </form>
         </div>
 
@@ -80,7 +96,7 @@
             {% for comment in comments %}            
                 <tr>
                     <td>
-                        <small class="text-muted">on {{ comment.createdate }}:</small>
+                        <small class="text-muted">{{comment.user__username}} on {{ comment.createdate }}:</small>
                         <p>{{ comment.text }}</p>
                 </td>
                 </tr> 
