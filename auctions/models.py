@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models.deletion import DO_NOTHING, PROTECT, SET_DEFAULT
 from django.contrib.auth.models import AbstractUser
+from django.db.models.expressions import OrderBy
 
 
 # Add your models here:
@@ -11,8 +12,12 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     listings = models.ManyToManyField('Listing', through='Bid')
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
-        return f"{self.id}:"
+        return f"{self.id}: {self.username}"
+
 
 # Listing
 class Listing(models.Model):
@@ -30,6 +35,7 @@ class Listing(models.Model):
     def __str__(self):
         return f"{self.id}: {self.description} - status 'active': {self.active}"
 
+
 # Bid
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -38,6 +44,7 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.user} bid for {self.listing} the amout of {self.amount}"
+
 
 # Comment
 class Comment(models.Model):
@@ -49,6 +56,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.id}: by user {self.user} created on {self.createdate}"
+
 
 # category
 class Category(models.Model):

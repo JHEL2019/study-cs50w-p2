@@ -97,25 +97,26 @@ def listing(request, listing_id, method=["GET", "POST"]):
     if request.method == "GET":
         print("--> LISTING - GET METHOD")
         
-        # retrieve listing object
+        # Retrieve listing object and use it to retrieve various QuerySets
         listing = Listing.objects.get(id = listing_id)
 
-        # retrieve all details of this listing
+        # Retrieve all details of this listing
         listing_details = Listing.objects.filter(id = listing_id).values()[0]
         # create additional context
         listing_owner = User.objects.filter(id = listing_details['owner']).values().first()["username"]
 
 
-        # retrieve all comments and bids linked to this listing
+        # Retrieve all comments and bids linked to this listing
         comments = listing.comment_set.values('text', 'createdate', 'user__username')
         
-        # retrieve highest bid
+        # Retrieve highest bid
         try:
             bid_max = listing.bid_set.values('amount', 'user', 'user__username').order_by('-amount')[0]
             print('-->BID MAX:', bid_max)
         except:
             bid_max=""
         
+        # Render listings view
         return render(request, "auctions/listing.html", {
             'listing' : listing_details, 
             'comments' : comments, 
@@ -135,17 +136,15 @@ def listing(request, listing_id, method=["GET", "POST"]):
                 request.session['watchlist'].append(num)
             request.session.save()
 
-
         # New Bid was made
         elif request.POST.get("btn-bid"):
             form = BidForm(request.POST)
             if form.is_valid():
                 bid = Bid(amount = form.cleaned_data['amount'], listing = Listing.objects.get(pk=listing_id), user = request.user)
                 # Validation 
-
+                # TO DO
                 # save is validation was successful
                 bid.save()
-
 
         # New Comment was submitted
         elif request.POST.get("btn-comment"):
@@ -154,7 +153,6 @@ def listing(request, listing_id, method=["GET", "POST"]):
                 comment = Comment(text = form.cleaned_data['text'], listings = Listing.objects.get(pk=listing_id), user = request.user)
                 comment.save()
 
-
         # Listing was closed
         elif request.POST.get("btn-closed"):
             listing = Listing.objects.get(id = listing_id)
@@ -162,19 +160,21 @@ def listing(request, listing_id, method=["GET", "POST"]):
             listing.save()
             return HttpResponseRedirect("/")
 
-        # POST request was received but cannot parsed
+        # POST request was received but cannot be parsed
         else:
             return HttpResponse("User input could not be processed")
-            # render(request, "auctions/listing.html", { 'message' : "User input could not be processed" })
-        
+
         return HttpResponseRedirect(reverse('listing', args=(listing_id,)))
-        return HttpResponseRedirect("/")
+
 
 # Watchlist showing all listings in session-watchlist
 def watchlist(request):
     # query set of all listings where active=True
-    listings = Listing.objects.filter(pk__in=request.session['watchlist']).values()
-    
+    try:
+        listings = Listing.objects.filter(pk__in=request.session['watchlist']).values()
+    except:
+        listings = {}
+
     # render listings with query-set
     return render(request, "auctions/index.html", {
         'listings' : listings
