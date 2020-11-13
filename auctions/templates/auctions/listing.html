@@ -51,7 +51,7 @@
                 <div>
                     <form action="{% url 'listing' listing.id %}" method="POST">
                         {% csrf_token %}
-                        <button class="btn btn-secondary btn-sm my-2" type="submit" value="{{ listing.id }}" name="btn-watchlist">Watchlist</button>
+                        <button class="btn btn-secondary my-2" type="submit" value="{{ listing.id }}" name="btn-watchlist">Watchlist</button>
                     </form>
                 </div>
             {% endif %}
@@ -60,53 +60,67 @@
 
     <!-- For signed-in users only -->
     {% if user.is_authenticated %}
+        <!-- for Listing-owner only: close listing-->
+        {% if user.id == listing.owner %}
+            <div class="container-fluid">
+                <hr>
+                <h5 class="mb-3 mt-3">Settings</h5>
+                <p>You are the owner of this listing and can close here.</p>
+                <form action="{% url 'listing' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-sm my-2" type="submit" value="closed" name="btn-closed">Close Listing</button>
+                </form>
+                <small class="text-muted">Note: This can not be undone by the user.</small>
+
+            </div>
+        {% endif %}
+
         <!-- bid for this listed item -->
-        <h5>Place a Bid:</div>
-        <div class="table-responsive-sm">
+        <div class="container-fluid mt-5">
+            <hr>
+            <h5 class="mb-3 mt-3">Place a bid</h5>
             <form action="{%url 'listing' listing.id %}" method="POST">
-                <table class="table">
                     {% csrf_token %}
                     {{ bidform.as_p }}
                     <input type="submit" value="Submit Bid" name="btn-bid" class="btn btn-primary">
-            </table>
             </form>
         </div>
-
-        <!-- the owner shouldbe able to close the listing -->
 
         <!-- closed items should indicate to the winner that he won -->       
 
         <!-- Add a new comment to the list -->
-        <h5 class="mt-4">Add your comment:</div>
-
-        <div class="table-responsive-sm">    
+        <div class="container-fluid mt-5"> 
+            <hr>
+            <h5 class="mb-3 mt-3">Add cour comment</h5>   
             <form action="{% url 'listing' listing.id%}" method="POST">
                 {% csrf_token %}
-                <table class="table">
-                    {{ commentform.as_table }}
-                </table>
-                <input type="submit" value="add comment" name="btn-comment" class="btn btn-primary">
+                
+                    {{ commentform.as_p }}
+                
+                <input type="submit" value="Add Comment" name="btn-comment" class="btn btn-primary">
             </form>
         </div>
 
         <!-- Show all comment relating to this listing -->
-        <h5 class="mt-5">Comment History:</h5>
-        <div class="table-responsive">
-            <table class="table table-striped">
-            {% for comment in comments %}            
-                <tr>
-                    <td>
-                        <small class="text-muted">{{comment.user__username}} on {{ comment.createdate }}:</small>
-                        <p>{{ comment.text }}</p>
-                </td>
-                </tr> 
-            {% empty %}
-                <tr>
-                    <p>Be the first to comment</p>
-                </tr>
-            {% endfor %}
-            </table>
+        <div class="container-fluid mt-5">
+            <hr>
+            <h5 class="my-3">Comment history</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    {% for comment in comments %}            
+                        <tr>
+                            <td>
+                                <small class="text-muted">{{comment.user__username}} on {{ comment.createdate }}:</small>
+                                <p>{{ comment.text }}</p>
+                            </td>
+                        </tr> 
+                    {% empty %}
+                        <tr>
+                            <td>Be the first to comment</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
-
     {% endif %}
 {% endblock %}

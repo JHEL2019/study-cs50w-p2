@@ -2,3 +2,31 @@
 # All files with these extensions will be ignored in
 # this directory and all its sub-directories.
 *.pyc
+auctions/__pycache__/__init__.cpython-38.pyc
+auctions/__pycache__/admin.cpython-38.pyc
+auctions/__pycache__/forms.cpython-38.pyc
+auctions/__pycache__/models.cpython-38.pyc
+auctions/__pycache__/urls.cpython-38.pyc
+auctions/__pycache__/views.cpython-38.pyc
+auctions/migrations/__pycache__/__init__.cpython-38.pyc
+auctions/migrations/__pycache__/0001_initial.cpython-38.pyc
+auctions/migrations/__pycache__/0002_auto_20201108_1521.cpython-38.pyc
+auctions/migrations/__pycache__/0003_auto_20201108_1728.cpython-38.pyc
+auctions/migrations/__pycache__/0004_auto_20201108_1731.cpython-38.pyc
+auctions/migrations/__pycache__/0005_auto_20201108_1804.cpython-38.pyc
+auctions/migrations/__pycache__/0006_listing_imageurl.cpython-38.pyc
+auctions/migrations/__pycache__/0007_auto_20201108_1821.cpython-38.pyc
+auctions/migrations/__pycache__/0008_listing_active.cpython-38.pyc
+auctions/migrations/__pycache__/0009_listing_owner.cpython-38.pyc
+auctions/migrations/__pycache__/0010_auto_20201108_2043.cpython-38.pyc
+auctions/migrations/__pycache__/0011_auto_20201110_2140.cpython-38.pyc
+auctions/migrations/__pycache__/0011_auto_20201111_1839.cpython-38.pyc
+auctions/migrations/__pycache__/0012_merge_20201111_1946.cpython-38.pyc
+auctions/migrations/__pycache__/0013_auto_20201111_2010.cpython-38.pyc
+auctions/migrations/__pycache__/0014_auto_20201111_2257.cpython-38.pyc
+auctions/migrations/__pycache__/0015_auto_20201111_2302.cpython-38.pyc
+commerce/__pycache__/__init__.cpython-38.pyc
+commerce/__pycache__/settings.cpython-38.pyc
+commerce/__pycache__/urls.cpython-38.pyc
+commerce/__pycache__/wsgi.cpython-38.pyc
+commerce/__pycache__/__init__.cpython-38.pyc

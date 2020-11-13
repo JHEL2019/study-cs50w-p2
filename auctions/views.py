@@ -110,8 +110,11 @@ def listing(request, listing_id, method=["GET", "POST"]):
         comments = listing.comment_set.values('text', 'createdate', 'user__username')
         
         # retrieve highest bid
-        bid_max = listing.bid_set.values('amount', 'user', 'user__username').order_by('-amount')[0]
-        print('-->BID MAX:', bid_max)
+        try:
+            bid_max = listing.bid_set.values('amount', 'user', 'user__username').order_by('-amount')[0]
+            print('-->BID MAX:', bid_max)
+        except:
+            bid_max=""
         
         return render(request, "auctions/listing.html", {
             'listing' : listing_details, 
@@ -138,6 +141,9 @@ def listing(request, listing_id, method=["GET", "POST"]):
             form = BidForm(request.POST)
             if form.is_valid():
                 bid = Bid(amount = form.cleaned_data['amount'], listing = Listing.objects.get(pk=listing_id), user = request.user)
+                # Validation 
+
+                # save is validation was successful
                 bid.save()
 
 
@@ -151,8 +157,10 @@ def listing(request, listing_id, method=["GET", "POST"]):
 
         # Listing was closed
         elif request.POST.get("btn-closed"):
-            pass
-
+            listing = Listing.objects.get(id = listing_id)
+            listing.active = False
+            listing.save()
+            return HttpResponseRedirect("/")
 
         # POST request was received but cannot parsed
         else:

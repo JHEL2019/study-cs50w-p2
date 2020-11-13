@@ -28,7 +28,7 @@ class Listing(models.Model):
     users = models.ManyToManyField('User', through='Bid')
 
     def __str__(self):
-        return f"{self.id}: {self.description} - created: {self.createdate}, updated: {self.updatedate}"
+        return f"{self.id}: {self.description} - status 'active': {self.active}"
 
 # Bid
 class Bid(models.Model):
