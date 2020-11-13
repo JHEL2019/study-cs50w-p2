@@ -22,7 +22,6 @@ class Listing(models.Model):
     min_price = models.IntegerField()
     description = models.TextField()
     createdate = models.DateTimeField(auto_now=True)
-    updatedate = models.DateTimeField(auto_now_add=True)
     image_url = models.URLField(default = '', blank=True)
     active = models.BooleanField(default=True)
     owner = models.IntegerField(default='1')
@@ -55,7 +54,7 @@ class Comment(models.Model):
         return f"{self.id}: by user {self.user} created on {self.createdate}"
 
 
-# category
+# Category
 class Category(models.Model):
     category = models.CharField(max_length=25, default='general')
 

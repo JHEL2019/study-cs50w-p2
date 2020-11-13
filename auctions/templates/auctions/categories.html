@@ -1,23 +1,21 @@
 {% extends "auctions/layout.html" %}
 {% load static %}
 
-{% title block}
-    Categories
+{% block title %}
+    Auctions - Categories
 {% endblock %}
 
 {% block body %}
-    <h2>Listing Categories</h2>
-
     <div class="container-fluid">
-        <ul>
-            {% for category of categories %}
-            <li><a href="{% url ''">{{ category.category }}</a></li>
-            {% empty %}
-
-            {% endif %}
-        </ul>
+        <h2>Categories</h2>
+        <div class="container-fluid mt-3"></div>
+            <ul>
+                {% for category in categories %}
+                    <li class="mb-2"><a href="{%url 'category' category.id %}">{{ category.category | capfirst }}</a></li>
+                {% empty %}
+                    <p>No categories available</p>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-        
-
-
 {% endblock %}

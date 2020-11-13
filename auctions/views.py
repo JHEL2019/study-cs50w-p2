@@ -9,9 +9,7 @@ from django.urls import reverse
 from .models import User, Listing, Bid, Comment, Category
 from .forms import ListingForm, CommentForm, BidForm
 
-# Add views here:
-
-# default route Index showing all actiive listings
+# default route Index showing all active listings
 def index(request):
     # query set of all listings where active=True
     active_listings = Listing.objects.filter(active=True).values()
@@ -20,6 +18,7 @@ def index(request):
     return render(request, "auctions/index.html", {
         'listings' : active_listings
     })
+
 
 # Login User
 def login_view(request):
@@ -44,11 +43,13 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
+
 # Logout User
 @login_required()
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
+
 
 # Register user
 def register(request):
@@ -77,6 +78,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+
 # New Listing
 @login_required()
 def new_listing(request, method = ["GET", "POST"]):
@@ -92,7 +94,7 @@ def new_listing(request, method = ["GET", "POST"]):
         })
 
 
-# Manipulate active listing details
+# Listing Details
 def listing(request, listing_id, method=["GET", "POST"]):
     if request.method == "GET":
         print("--> LISTING - GET METHOD")
@@ -101,7 +103,7 @@ def listing(request, listing_id, method=["GET", "POST"]):
         listing = Listing.objects.get(id = listing_id)
 
         # Retrieve all details of this listing
-        listing_details = Listing.objects.filter(id = listing_id).values()[0]
+        listing_details = Listing.objects.filter(id = listing_id).values('id', 'item', 'min_price', 'description', 'createdate', 'image_url', 'active', 'owner', 'category', 'users')[0]
         # create additional context
         listing_owner = User.objects.filter(id = listing_details['owner']).values().first()["username"]
 
@@ -168,6 +170,7 @@ def listing(request, listing_id, method=["GET", "POST"]):
 
 
 # Watchlist showing all listings in session-watchlist
+@login_required()
 def watchlist(request):
     # query set of all listings where active=True
     try:
@@ -181,28 +184,20 @@ def watchlist(request):
     })
 
 
+# Categories available in Auctions
 def categories(request):
     categories = Category.objects.all()
-    print("available categories", categories)
-
-    return render(request, reverse("categories"), {
-    'categories' : categories
-
-# Categories of listings with a link to all listings in this category
-def categories(request, category):
     
-    if category == "all":
-        print("'All' category passed")
-        
-        categories = Category.objects.all()
-        print("available categories", categories)
-
-        return render(request, reverse("categories"), {
+    return render(request, "auctions/categories.html", {
         'categories' : categories
-        })
-    else:
-        print("--> category:", category)
-        return HttpResponse("/category passed")    
+    })
 
 
- 
+# Listings shown by category
+def category_view(request, category):
+    listings = Listing.objects.filter(category = category)
+    
+    return render(request, "auctions/category.html", {
+        'listings' : listings
+    })
+

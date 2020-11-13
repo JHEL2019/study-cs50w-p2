@@ -31,24 +31,4 @@ class BidForm(ModelForm):
         fields = ['amount']
         exclude = ['user', 'listing']
 
-    '''
-    def clean(self):
-        amount = self.cleaned_data.get('amount')
-        print()
-        print("Error", Bid.objects.values('listing__min_price'))
-        return
-
-        if amount <= Bid.objects.all()[0]:
-            print("Error", Bid.objects.all()[0])
-            raise ValidationError("Yor bid must be higher than starting price")
-        return amount
-
-
-
-    amount = IntegerField(validators=[MinValueValidator(self.objects.all()[0].values('min_price'), message="Your bid must be higher than the starting price")])
-   
-    def clean(self):
-        amount = 
-        if Bid.objects.filter(listing__min_price__gt=F('amount')):
-            raise ValidationError("Yor bid must be higher than starting price")
-    '''
+    
