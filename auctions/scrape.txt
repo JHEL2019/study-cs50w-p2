@@ -20,3 +20,23 @@ def get_name(request):
         form = NameForm()
 
     return render(request, 'name.html', {'form': form})
+
+
+    ---
+
+            <!-- {{ user.id == bid_max.user }}<br> -->
+
+
+        
+        user: {{ user.id }}<br>
+        user name: {{ user.username }}<br>
+        bid_max.id: {{ bid_max.user }}<br>
+        bid_max.user: {{ bid_max.user__username }}<br>
+
+        | truncatewords:30
+
+                    
+        highest bid: <br>
+        user: {{ bid_max.user }}<br>
+        user name: {{ bid_max.user__username }}<br>
+        amount: {{ bid_max.amount }}<br>

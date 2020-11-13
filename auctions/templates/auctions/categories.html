@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% title block}
+    Categories
+{% endblock %}
+
+{% block body %}
+    <h2>Listing Categories</h2>
+
+    <div class="container-fluid">
+        <ul>
+            {% for category of categories %}
+            <li><a href="{% url ''">{{ category.category }}</a></li>
+            {% empty %}
+
+            {% endif %}
+        </ul>
+    </div>
+        
+
+
+{% endblock %}

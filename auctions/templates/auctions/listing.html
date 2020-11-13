@@ -6,7 +6,11 @@
 {% endblock %}
 
 {% block body %}
-    <h2>Listing Details for {{ listing.item | capfirst }}</h2>
+    {% if listing.active == True %}
+        <h2>Listing Details for {{ listing.item | capfirst }}</h2>
+    {% else %}
+        <h2>Listing Details for {{ listing.item | capfirst }}  <span class="badge badge-pill badge-warning">closed</span></h2>
+    {% endif %}
 
     <!-- show messages such as for etc. -->
     {% if message %}
@@ -17,7 +21,7 @@
     {% endif %}
 
     <!-- Show details of listing -->
-    <div class="row">
+    <div class="row container-fluid">
         <div class="col-5">
             <!-- place a 'watchlist' label above the image -->
             {% if listing.id in request.session.watchlist %}
@@ -43,11 +47,11 @@
                 <p>No bid submitted yet</p>
             {% endif %}
             
-            <p>{{ listing.description | truncatewords:30 }}</p>
+            <p>{{ listing.description  }}</p>
             <small class="text-muted">created: {{ listing.createdate }} by {{ listing_owner }}</small>
             
+            <!-- add listing to watchlist -->
             {% if user.is_authenticated %}
-                <!-- add listing to watchlist -->
                 <div>
                     <form action="{% url 'listing' listing.id %}" method="POST">
                         {% csrf_token %}
@@ -55,12 +59,13 @@
                     </form>
                 </div>
             {% endif %}
+
         </div>
     </div>
 
     <!-- For signed-in users only -->
     {% if user.is_authenticated %}
-        <!-- for Listing-owner only: close listing-->
+        <!-- Close listing-->
         {% if user.id == listing.owner %}
             <div class="container-fluid">
                 <hr>
@@ -71,22 +76,28 @@
                     <button class="btn btn-danger btn-sm my-2" type="submit" value="closed" name="btn-closed">Close Listing</button>
                 </form>
                 <small class="text-muted">Note: This can not be undone by the user.</small>
-
             </div>
         {% endif %}
 
-        <!-- bid for this listed item -->
-        <div class="container-fluid mt-5">
-            <hr>
-            <h5 class="mb-3 mt-3">Place a bid</h5>
-            <form action="{%url 'listing' listing.id %}" method="POST">
-                    {% csrf_token %}
-                    {{ bidform.as_p }}
-                    <input type="submit" value="Submit Bid" name="btn-bid" class="btn btn-primary">
-            </form>
-        </div>
+        <!-- Item won by user -->
+        {% if listing.active == False and user.id == bid_max.user %}
+            <div class="alert alert-success">
+                <strong>Success!</strong> Your offer was the winning bid for this listing.
+          </div>
+        {% endif %}
 
-        <!-- closed items should indicate to the winner that he won -->       
+        <!-- bid for this listed item -->
+        {% if listing.active == True %}
+            <div class="container-fluid mt-5">
+                <hr>
+                <h5 class="mb-3 mt-3">Place a bid</h5>
+                <form action="{%url 'listing' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        {{ bidform.as_p }}
+                        <input type="submit" value="Submit Bid" name="btn-bid" class="btn btn-primary">
+                </form>
+            </div>
+        {% endif %}
 
         <!-- Add a new comment to the list -->
         <div class="container-fluid mt-5"> 
@@ -94,9 +105,7 @@
             <h5 class="mb-3 mt-3">Add cour comment</h5>   
             <form action="{% url 'listing' listing.id%}" method="POST">
                 {% csrf_token %}
-                
-                    {{ commentform.as_p }}
-                
+                {{ commentform.as_p }}
                 <input type="submit" value="Add Comment" name="btn-comment" class="btn btn-primary">
             </form>
         </div>

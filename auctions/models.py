@@ -5,9 +5,6 @@ from django.db.models.deletion import DO_NOTHING, PROTECT, SET_DEFAULT
 from django.contrib.auth.models import AbstractUser
 from django.db.models.expressions import OrderBy
 
-
-# Add your models here:
-
 # User
 class User(AbstractUser):
     listings = models.ManyToManyField('Listing', through='Bid')
@@ -33,7 +30,7 @@ class Listing(models.Model):
     users = models.ManyToManyField('User', through='Bid')
 
     def __str__(self):
-        return f"{self.id}: {self.description} - status 'active': {self.active}"
+        return f"{self.id}: {self.item} - status 'active': {self.active} - owner: {self.owner}"
 
 
 # Bid

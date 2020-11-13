@@ -114,7 +114,7 @@ def listing(request, listing_id, method=["GET", "POST"]):
             bid_max = listing.bid_set.values('amount', 'user', 'user__username').order_by('-amount')[0]
             print('-->BID MAX:', bid_max)
         except:
-            bid_max=""
+            bid_max={}
         
         # Render listings view
         return render(request, "auctions/listing.html", {
@@ -179,3 +179,30 @@ def watchlist(request):
     return render(request, "auctions/index.html", {
         'listings' : listings
     })
+
+
+def categories(request):
+    categories = Category.objects.all()
+    print("available categories", categories)
+
+    return render(request, reverse("categories"), {
+    'categories' : categories
+
+# Categories of listings with a link to all listings in this category
+def categories(request, category):
+    
+    if category == "all":
+        print("'All' category passed")
+        
+        categories = Category.objects.all()
+        print("available categories", categories)
+
+        return render(request, reverse("categories"), {
+        'categories' : categories
+        })
+    else:
+        print("--> category:", category)
+        return HttpResponse("/category passed")    
+
+
+ 
