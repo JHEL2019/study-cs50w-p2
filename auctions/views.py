@@ -21,7 +21,6 @@ def index(request):
         'listings' : active_listings
     })
 
-
 # Login User
 def login_view(request):
     if request.method == "POST":
@@ -160,4 +159,15 @@ def listing(request, listing_id, method=["GET", "POST"]):
             return HttpResponse("User input could not be processed")
             # render(request, "auctions/listing.html", { 'message' : "User input could not be processed" })
         
+        return HttpResponseRedirect(reverse('listing', args=(listing_id,)))
         return HttpResponseRedirect("/")
+
+# Watchlist showing all listings in session-watchlist
+def watchlist(request):
+    # query set of all listings where active=True
+    listings = Listing.objects.filter(pk__in=request.session['watchlist']).values()
+    
+    # render listings with query-set
+    return render(request, "auctions/index.html", {
+        'listings' : listings
+    })

@@ -1,0 +1,38 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+
+    <div class="container-fluid">
+        <table class="table">
+            <thead>
+                <tr class="d-flex">
+                    <th class="col-1">image</t>
+                    <th class="col-2">name</t>
+                    <th class="col-7">description</t>
+                    <th class="col-2">price</t>
+                </tr>
+            </thead>
+            <tbody>
+                {%for listing in listings %}
+                   <tr class="d-flex">
+                        {% if listing.image_url %}
+                            <td><img src="{{ listing.image_url }}" alt="refence photo" class="img-thumbnail"></td>
+                        {% else %}
+                            <td class="col-1"><img src="{% static 'auctions/no_image.jpg' %}" alt="no image"  class="img-thumbnail"></td>
+                        {% endif %}
+                        <td class="col-2"><strong><a href="{% url 'listing' listing.id %}">{{ listing.item | capfirst }}</strong></h3></td>
+                        <td class="col-7">{{ listing.description }}</td>
+                        <td class="col-2"><span>Price: $ </span><span>{{ listing._price }}</span></td>
+                    </tr>
+                {% empty %}
+                    <p>Watchlist is empty.</p>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        
+
+
+{% endblock %}
