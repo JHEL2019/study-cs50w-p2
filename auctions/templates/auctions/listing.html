@@ -6,12 +6,9 @@
 {% endblock %}
 
 {% block body %}
-    {% if listing.active == True %}
-        <h2>Listing Details for {{ listing.item | capfirst }}</h2>
-    {% else %}
-        <h2>Listing Details for {{ listing.item | capfirst }}  <span class="badge badge-pill badge-warning">closed</span></h2>
-    {% endif %}
+    
 
+    
     <!-- show messages such as for etc. -->
     {% if message %}
         <div class="alert alert-warning alert-dismissible">
@@ -19,15 +16,11 @@
             <strong>Warning!</strong> {{ message }}
         </div>
     {% endif %}
+    
 
     <!-- Show details of listing -->
     <div class="row container-fluid">
         <div class="col-5">
-            <!-- place a 'watchlist' label above the image -->
-            {% if listing.id in request.session.watchlist %}
-                <span class="badge badge-pill badge-primary">Watchlist</span>
-            {% endif %}
-
             <!-- show image or placeholder -->
             {% if listing.image_url %}
                 <img src="{{ listing.image_url }}" alt="refence photo"  class="img-fluid">
@@ -38,9 +31,20 @@
 
         <div class="col-7">
             <!-- details of listing -->
-            <h5 class="display-4">{{ listing.item | capfirst }}</h5>
+            {% if listing.active == True %}
+                <h2 class="display-4">{{ listing.item | capfirst }}</h2>
+            {% else %}
+                <h2 class="display-4">{{ listing.item | capfirst }}  <span class="badge badge-pill badge-warning">closed</span></h2>
+            {% endif %}
 
+            
+            
             <small class="text-muted">starting price: ${{ listing.min_price }}</small>
+            <!-- place a 'watchlist' label above the image -->
+            {% if listing.id in request.session.watchlist %}
+                <span class="badge badge-pill badge-primary">Watchlist</span>
+            {% endif %}
+
             {% if bid_max.amount %}
                 <p>current bid: ${{ bid_max.amount }}</p>
             {% else %}
@@ -48,7 +52,7 @@
             {% endif %}
             
             <p>{{ listing.description  }}</p>
-            <small class="text-muted">created: {{ listing.createdate }} by {{ listing.owner__username }}</small>
+            <small class="text-muted">created: {{ listing.createdate }} by {{ listing.users__username }}</small>
             
             <!-- add listing to watchlist -->
             {% if user.is_authenticated %}
@@ -66,7 +70,7 @@
     <!-- For signed-in users only -->
     {% if user.is_authenticated %}
         <!-- Close listing-->
-        {% if user.id == listing.owner__id %}
+        {% if user.id == listing.users__id and listing.active == True %}
             <div class="container-fluid">
                 <hr>
                 <h5 class="mb-3 mt-3">Settings</h5>

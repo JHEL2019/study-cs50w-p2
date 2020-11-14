@@ -31,7 +31,9 @@
                         <td class="col-2"><span>Price: $ </span><span>{{ row.min_price }}</span></td>
                     </tr>
                 {% empty %}
-                    <p>No active listings available</p>
+                    <tr>
+                        <td>No active listings available</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
