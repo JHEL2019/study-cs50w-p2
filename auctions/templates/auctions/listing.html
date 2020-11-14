@@ -48,7 +48,7 @@
             {% endif %}
             
             <p>{{ listing.description  }}</p>
-            <small class="text-muted">created: {{ listing.createdate }} by {{ listing_owner }}</small>
+            <small class="text-muted">created: {{ listing.createdate }} by {{ listing.owner__username }}</small>
             
             <!-- add listing to watchlist -->
             {% if user.is_authenticated %}
@@ -66,7 +66,7 @@
     <!-- For signed-in users only -->
     {% if user.is_authenticated %}
         <!-- Close listing-->
-        {% if user.id == listing.owner %}
+        {% if user.id == listing.owner__id %}
             <div class="container-fluid">
                 <hr>
                 <h5 class="mb-3 mt-3">Settings</h5>
@@ -80,7 +80,7 @@
         {% endif %}
 
         <!-- Item won by user -->
-        {% if listing.active == False and user.id == bid_max.user %}
+        {% if listing.active == False and user.id == bid_max.user.id %}
             <div class="alert alert-success">
                 <strong>Success!</strong> Your offer was the winning bid for this listing.
           </div>

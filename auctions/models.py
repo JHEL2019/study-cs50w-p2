@@ -24,12 +24,13 @@ class Listing(models.Model):
     createdate = models.DateTimeField(auto_now=True)
     image_url = models.URLField(default = '', blank=True)
     active = models.BooleanField(default=True)
-    owner = models.IntegerField(default='1')
+    # owner_id = models.IntegerField(default='1')
+    owner = models.OneToOneField('User', default=1, on_delete=models.CASCADE, related_name="own_listing")
     category = models.ForeignKey('Category', default='1', on_delete=SET_DEFAULT, related_name='listing')
     users = models.ManyToManyField('User', through='Bid')
 
     def __str__(self):
-        return f"{self.id}: {self.item} - status 'active': {self.active} - owner: {self.owner}"
+        return f"{self.id}: {self.item} - status 'active': {self.active} - owner: {self.owner.user.id}"
 
 
 # Bid

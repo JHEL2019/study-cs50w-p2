@@ -85,7 +85,7 @@ def new_listing(request, method = ["GET", "POST"]):
     if request.method == "POST":
         form = ListingForm(request.POST)
         if form.is_valid():
-            newlisting = Listing(item = form.cleaned_data['item'], min_price = form.cleaned_data['min_price'],description = form.cleaned_data['description'], image_url = form.cleaned_data['image_url'], owner = request.user.id, category = form.cleaned_data['category'])
+            newlisting = Listing(item = form.cleaned_data['item'], min_price = form.cleaned_data['min_price'], description = form.cleaned_data['description'], image_url = form.cleaned_data['image_url'],  category = form.cleaned_data['category'])
             newlisting.save()
         return HttpResponseRedirect("/")
     else:
@@ -103,9 +103,9 @@ def listing(request, listing_id, method=["GET", "POST"]):
         listing = Listing.objects.get(id = listing_id)
 
         # Retrieve all details of this listing
-        listing_details = Listing.objects.filter(id = listing_id).values('id', 'item', 'min_price', 'description', 'createdate', 'image_url', 'active', 'owner', 'category', 'users')[0]
+        listing_details = Listing.objects.filter(id = listing_id).values('id', 'item', 'min_price', 'description', 'createdate', 'image_url', 'active', 'owner__id', "owner__username" 'category', 'users')[0]
         # create additional context
-        listing_owner = User.objects.filter(id = listing_details['owner']).values().first()["username"]
+        # listing_owner = User.objects.filter(id = listing_details['owner_id']).values().first()["username"]
 
 
         # Retrieve all comments and bids linked to this listing
@@ -113,7 +113,7 @@ def listing(request, listing_id, method=["GET", "POST"]):
         
         # Retrieve highest bid
         try:
-            bid_max = listing.bid_set.values('amount', 'user', 'user__username').order_by('-amount')[0]
+            bid_max = listing.bid_set.values('amount', 'user__userid', 'user__username').order_by('-amount')[0]
             print('-->BID MAX:', bid_max)
         except:
             bid_max={}
@@ -125,7 +125,7 @@ def listing(request, listing_id, method=["GET", "POST"]):
             'commentform' : CommentForm(),
             'bid_max' : bid_max,
             'bidform' : BidForm(),
-            'listing_owner' : listing_owner
+            # 'listing_owner' : listing_owner
         })
     # Processing POST request
     else:
