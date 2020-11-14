@@ -30,3 +30,4 @@ commerce/__pycache__/settings.cpython-38.pyc
 commerce/__pycache__/urls.cpython-38.pyc
 commerce/__pycache__/wsgi.cpython-38.pyc
 commerce/__pycache__/__init__.cpython-38.pyc
+*.pyc
